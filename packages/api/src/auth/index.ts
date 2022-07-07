@@ -38,9 +38,17 @@ export const parseAuthorizationHeader = (
   return { schema, token }
 }
 
+/**
+ * A "thruple" of
+ * [0] - decoded JWT (if possible), or the token-string itself, or null
+ * [1] - type of auth, decided by the decoder & headers
+ * [2] - event + context
+ */
 export type AuthContextPayload = [
-  string | Record<string, unknown> | null,
+  Record<string, unknown> | string | null,
   { type: SupportedAuthTypes } & AuthorizationHeader,
+
+  // @TODO remove from AuthContextPayload
   { event: APIGatewayProxyEvent; context: LambdaContext }
 ]
 

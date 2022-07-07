@@ -34,6 +34,11 @@ export interface RedwoodGraphQLContext {
   [index: string]: unknown
 }
 
+export type AuthDecoderResult = {
+  result: AuthContextPayload[0]
+  metadata: AuthContextPayload[1]
+}
+
 /**
  * GraphQLHandlerOptions
  */
@@ -81,6 +86,11 @@ export interface GraphQLHandlerOptions {
    * import directives from 'src/directives/**\/*.{js,ts}'
    */
   directives?: DirectiveGlobImports
+
+  authDecoder?: (
+    event: any,
+    context: RedwoodGraphQLContext['requestContext']
+  ) => Promise<AuthDecoderResult> | AuthDecoderResult
 
   /**
    * @description A list of options passed to [makeExecutableSchema]

@@ -1,11 +1,8 @@
 import { Plugin } from '@graphql-yoga/common'
 
-import { getAuthenticationContext } from '@redwoodjs/api'
-
-// import { AuthenticationError } from '../errors'
 import {
-  RedwoodGraphQLContext,
   GraphQLHandlerOptions,
+  RedwoodGraphQLContext,
 } from '../functions/types'
 
 /**
@@ -13,33 +10,38 @@ import {
  * based on custom getCurrentUser function.
  */
 export const useRedwoodAuthContext = (
-  getCurrentUser: GraphQLHandlerOptions['getCurrentUser']
+  getCurrentUser: GraphQLHandlerOptions['getCurrentUser'],
+  authDecoder: GraphQLHandlerOptions['authDecoder']
 ): Plugin<RedwoodGraphQLContext> => {
+  if (!authDecoder) {
+    // If no auth decoder is supplied there's nothing to do
+    return {}
+  }
+
   return {
     async onContextBuilding({ context, extendContext }) {
+      // requestContext === Lambda context
       const { requestContext } = context
 
-      let authContext = undefined
+      let result = undefined
+      let metadata = undefined
 
       try {
-        authContext = await getAuthenticationContext({
-          event: context.event,
-          context: requestContext,
-        })
+        ;({ result, metadata } = await authDecoder(
+          context.event,
+          requestContext
+        ))
       } catch (error: any) {
-        throw new Error(
-          `Exception in getAuthenticationContext: ${error.message}`
-        )
+        throw new Error(`Exception in authDecoder: ${error.message}`)
       }
 
       try {
-        if (authContext) {
+        if (result) {
           const currentUser = getCurrentUser
-            ? await getCurrentUser(
-                authContext[0],
-                authContext[1],
-                authContext[2]
-              )
+            ? await getCurrentUser(result, metadata, {
+                event: context.event,
+                context: requestContext,
+              })
             : null
 
           extendContext({ currentUser })

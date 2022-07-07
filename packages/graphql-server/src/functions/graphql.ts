@@ -89,6 +89,7 @@ export const createGraphQLHandler = ({
   services,
   sdls,
   directives = [],
+  authDecoder,
   depthLimitOptions,
   allowedOperations,
   defaultError = 'Something went wrong.',
@@ -134,7 +135,7 @@ export const createGraphQLHandler = ({
   }
 
   // Custom Redwood plugins
-  plugins.push(useRedwoodAuthContext(getCurrentUser))
+  plugins.push(useRedwoodAuthContext(getCurrentUser, authDecoder))
   plugins.push(useRedwoodGlobalContextSetter())
 
   if (context) {
