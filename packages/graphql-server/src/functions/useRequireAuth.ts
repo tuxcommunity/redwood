@@ -1,6 +1,6 @@
 import type { APIGatewayEvent, Context as LambdaContext } from 'aws-lambda'
 
-import { getAuthenticationContext } from '@redwoodjs/api'
+import { AuthDecoder } from '@redwoodjs/api'
 
 import {
   getAsyncStoreInstance,
@@ -15,10 +15,17 @@ interface Args {
     context: LambdaContext,
     ...others: any
   ) => any
+  authDecoder: AuthDecoder
   getCurrentUser: GetCurrentUser
 }
 
-export const useRequireAuth = ({ handlerFn, getCurrentUser }: Args) => {
+// @MARK: breaking changes
+
+export const useRequireAuth = ({
+  handlerFn,
+  getCurrentUser,
+  authDecoder,
+}: Args) => {
   return async (
     event: APIGatewayEvent,
     context: LambdaContext,
@@ -26,15 +33,12 @@ export const useRequireAuth = ({ handlerFn, getCurrentUser }: Args) => {
   ) => {
     const authEnrichedFunction = async () => {
       try {
-        const authContext = await getAuthenticationContext({ event, context })
+        const { result, metadata } = await authDecoder(event, context)
 
-        if (authContext) {
+        // @MARK: any cases where we need to worry if result is null?
+        if (result) {
           const currentUser = getCurrentUser
-            ? await getCurrentUser(
-                authContext[0],
-                authContext[1],
-                authContext[2]
-              )
+            ? await getCurrentUser(result, metadata)
             : null
 
           globalContext.currentUser = currentUser

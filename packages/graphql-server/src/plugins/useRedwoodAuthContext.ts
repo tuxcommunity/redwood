@@ -20,7 +20,7 @@ export const useRedwoodAuthContext = (
 
   return {
     async onContextBuilding({ context, extendContext }) {
-      // requestContext === Lambda context
+      // requestContext is Lambda context
       const { requestContext } = context
 
       let result = undefined

@@ -29,5 +29,3 @@ export interface MakeServicesInterface {
 export type MakeServices = (args: MakeServicesInterface) => ServicesGlobImports
 
 export type GraphQLTypeWithFields = GraphQLObjectType | GraphQLInterfaceType
-
-export { AuthDecoderResult } from './functions/types'

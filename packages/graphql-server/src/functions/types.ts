@@ -4,20 +4,19 @@ import { IExecutableSchemaDefinition } from '@graphql-tools/schema'
 import type { PluginOrDisabledPlugin } from '@graphql-yoga/common'
 import type { APIGatewayProxyEvent, Context as LambdaContext } from 'aws-lambda'
 
-import type { AuthContextPayload } from '@redwoodjs/api'
-import { CorsConfig } from '@redwoodjs/api'
+import type { CorsConfig, AuthDecoderResult, AuthDecoder } from '@redwoodjs/api'
 
-import { DirectiveGlobImports } from 'src/directives/makeDirectives'
-
+import { DirectiveGlobImports } from '../directives/makeDirectives'
 import { LoggerConfig } from '../plugins/useRedwoodLogger'
 import { SdlGlobImports, ServicesGlobImports } from '../types'
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 
+// @MARK breaking change
 export type GetCurrentUser = (
-  decoded: AuthContextPayload[0],
-  raw: AuthContextPayload[1],
-  req?: AuthContextPayload[2]
+  decoderResult: AuthDecoderResult['result'],
+  meta: AuthDecoderResult['metadata'],
+  eventAndContext?: { event: APIGatewayProxyEvent; context: LambdaContext }
 ) => Promise<null | Record<string, unknown> | string>
 
 export type GenerateGraphiQLHeader = () => string
@@ -29,14 +28,10 @@ export type ContextFunction = (...args: any[]) => Context | Promise<Context>
 export interface RedwoodGraphQLContext {
   event: APIGatewayProxyEvent
   requestContext: LambdaContext
-  currentUser?: ThenArg<ReturnType<GetCurrentUser>> | AuthContextPayload | null
+  // @MARK removed AuthContextPayload here... where did we return this? I think its old code we need to remove
+  currentUser?: ThenArg<ReturnType<GetCurrentUser>> | null
 
   [index: string]: unknown
-}
-
-export type AuthDecoderResult = {
-  result: AuthContextPayload[0]
-  metadata: AuthContextPayload[1]
 }
 
 /**
@@ -87,10 +82,7 @@ export interface GraphQLHandlerOptions {
    */
   directives?: DirectiveGlobImports
 
-  authDecoder?: (
-    event: any,
-    context: RedwoodGraphQLContext['requestContext']
-  ) => Promise<AuthDecoderResult> | AuthDecoderResult
+  authDecoder?: AuthDecoder
 
   /**
    * @description A list of options passed to [makeExecutableSchema]

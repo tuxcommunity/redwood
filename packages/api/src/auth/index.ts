@@ -4,7 +4,29 @@ import type { APIGatewayProxyEvent, Context as LambdaContext } from 'aws-lambda'
 
 import type { SupportedAuthTypes } from '@redwoodjs/auth'
 
-import { decodeToken } from './decoders'
+export type AuthDecoderResult<
+  TDecoderType = string,
+  TResult = Record<string, unknown> | string | null
+> = {
+  result: TResult
+  // @MARK this makes it a breaking change, but thats OK
+  // We need to decide what other things are useful here
+  metadata: { type: TDecoderType; token: string }
+}
+
+// @MARK AuthDecoder type sits in rwjs/api package but is only used in graphql-server
+// It feels more right to sit in api though... when imported
+// @TODO think about how we make this less tied to Lambdas.
+//  Maybe another generic? But then how does the user pass the context/event - and do they need to?
+export type AuthDecoder<
+  TDecoderType = string,
+  TResult = Record<string, unknown> | string | null
+> = (
+  event: APIGatewayProxyEvent,
+  context: LambdaContext
+) =>
+  | Promise<AuthDecoderResult<TDecoderType, TResult>>
+  | AuthDecoderResult<TDecoderType, TResult>
 
 // This is shared by `@redwoodjs/web`
 const AUTH_PROVIDER_HEADER = 'auth-provider'
@@ -23,55 +45,19 @@ export interface AuthorizationHeader {
  * Split the `Authorization` header into a schema and token part.
  */
 export const parseAuthorizationHeader = (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
+  headerName = 'authorization'
 ): AuthorizationHeader => {
+  // @MARK INCOMPLETE!!! should we use something like https://www.npmjs.com/package/header-case
   const parts = (
-    event.headers?.authorization || event.headers?.Authorization
+    event.headers?.[headerName] || event.headers?.Authorization
   )?.split(' ')
   if (parts?.length !== 2) {
-    throw new Error('The `Authorization` header is not valid.')
+    throw new Error(`The ${headerName} header is not valid.`)
   }
   const [schema, token] = parts
   if (!schema.length || !token.length) {
-    throw new Error('The `Authorization` header is not valid.')
+    throw new Error(`The ${headerName} header is not valid.`)
   }
   return { schema, token }
-}
-
-/**
- * A "thruple" of
- * [0] - decoded JWT (if possible), or the token-string itself, or null
- * [1] - type of auth, decided by the decoder & headers
- * [2] - event + context
- */
-export type AuthContextPayload = [
-  Record<string, unknown> | string | null,
-  { type: SupportedAuthTypes } & AuthorizationHeader,
-
-  // @TODO remove from AuthContextPayload
-  { event: APIGatewayProxyEvent; context: LambdaContext }
-]
-
-/**
- * Get the authorization information from the request headers and request context.
- * @returns [decoded, { type, schema, token }, { event, context }]
- **/
-export const getAuthenticationContext = async ({
-  event,
-  context,
-}: {
-  event: APIGatewayProxyEvent
-  context: LambdaContext
-}): Promise<undefined | AuthContextPayload> => {
-  const type = getAuthProviderHeader(event)
-  // No `auth-provider` header means that the user is logged out,
-  // and none of this auth malarky is required.
-  if (!type) {
-    return undefined
-  }
-
-  let decoded = null
-  const { schema, token } = parseAuthorizationHeader(event)
-  decoded = await decodeToken(type, token, { event, context })
-  return [decoded, { type, schema, token }, { event, context }]
 }
