@@ -1,5 +1,3 @@
-import type { WebAuthnClientType } from '../webAuthn'
-
 import { AuthClient } from './index'
 
 export interface LoginAttributes {
@@ -14,7 +12,7 @@ export interface ResetPasswordAttributes {
 
 export type SignupAttributes = Record<string, unknown> & LoginAttributes
 
-export type DbAuth = undefined | WebAuthnClientType
+export type DbAuth = () => null
 
 export type DbAuthConfig = {
   fetchConfig: {
@@ -28,7 +26,7 @@ let lastTokenCheckAt = new Date('1970-01-01T00:00:00')
 let cachedToken: string | null
 
 export const dbAuth = (
-  client: any,
+  _client: DbAuth,
   config: DbAuthConfig = { fetchConfig: { credentials: 'same-origin' } }
 ): AuthClient => {
   const { credentials } = config.fetchConfig
@@ -142,7 +140,7 @@ export const dbAuth = (
 
   return {
     type: 'dbAuth',
-    client,
+    client: () => null,
     login,
     logout,
     signup,

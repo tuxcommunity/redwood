@@ -1,12 +1,7 @@
 import CryptoJS from 'crypto-js'
 
 import * as error from '../errors'
-import {
-  getSession,
-  decryptSession,
-  dbAuthSession,
-  webAuthnSession,
-} from '../shared'
+import { getSession, decryptSession, dbAuthSession } from '../shared'
 
 process.env.SESSION_SECRET = 'nREjs1HPS7cFia6tQHK70EWGtfhOgbqJQKsHQz3S'
 
@@ -81,19 +76,5 @@ describe('dbAuthSession()', () => {
     }
 
     expect(dbAuthSession(event)).toEqual(first)
-  })
-})
-
-describe('webAuthnSession', () => {
-  it('returns null if no cookies', () => {
-    expect(webAuthnSession({ headers: {} })).toEqual(null)
-  })
-
-  it('returns the webAuthn cookie data', () => {
-    const output = webAuthnSession({
-      headers: { cookie: 'session=abcd1234;webAuthn=zyxw9876' },
-    })
-
-    expect(output).toEqual('zyxw9876')
   })
 })
