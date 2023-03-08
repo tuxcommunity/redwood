@@ -362,7 +362,10 @@ export function normalizePage(
   // an async module import.
   return {
     name: specOrPage.name,
-    loader: async () => ({ default: specOrPage }),
+    loader: () =>
+      ({ default: specOrPage } as unknown as Promise<{
+        default: React.ComponentType<unknown>
+      }>),
   }
 }
 

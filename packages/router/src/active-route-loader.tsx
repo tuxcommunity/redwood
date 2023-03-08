@@ -15,7 +15,7 @@ import { ParamsProvider, useLocation } from '.'
 
 const DEFAULT_PAGE_LOADING_DELAY = 1000 // milliseconds
 
-type synchronousLoaderSpec = () => { default: React.ComponentType<unknown> }
+type LoadedLoaderSpec = { default: React.ComponentType<unknown> }
 
 interface Props {
   path: string
@@ -42,9 +42,16 @@ export const ActiveRouteLoader = ({
   const loadingTimeout = useRef<NodeJS.Timeout>()
   const announcementRef = useRef<HTMLDivElement>(null)
   const waitingFor = useRef<string>('')
+
   const [loadingState, setLoadingState] = useState<LoadingStateRecord>({
-    [path]: { page: ArlNullPage, specName: '', state: 'PRE_SHOW', location },
+    [path]: {
+      page: (spec.loader() as unknown as LoadedLoaderSpec).default,
+      specName: '',
+      state: 'PRE_SHOW',
+      location,
+    },
   })
+
   const [renderedChildren, setRenderedChildren] = useState<
     React.ReactNode | undefined
   >(children)
@@ -182,16 +189,15 @@ export const ActiveRouteLoader = ({
     }
   }, [spec, delay, children, whileLoadingPage, path, location, isMounted])
 
-  // It might feel tempting to move this code further up in the file for an
-  // "early return", but React doesn't allow that because pretty much all code
-  // above is hooks, and they always need to come before any `return`
+  let renderedLoadingState = loadingState
+
   if (globalThis.__REDWOOD__PRERENDERING) {
     // babel auto-loader plugin uses withStaticImport in prerender mode
     // override the types for this condition
-    const syncPageLoader = spec.loader as unknown as synchronousLoaderSpec
-    const PageFromLoader = syncPageLoader().default
+    const PageFromLoader = (spec.loader() as unknown as LoadedLoaderSpec)
+      .default
 
-    const prerenderLoadingState: LoadingStateRecord = {
+    renderedLoadingState = {
       [path]: {
         state: 'DONE',
         specName: spec.name,
@@ -199,18 +205,6 @@ export const ActiveRouteLoader = ({
         location,
       },
     }
-
-    return (
-      <ParamsProvider path={path} location={location}>
-        <PageLoadingContextProvider value={{ loading: false }}>
-          <ActivePageContextProvider
-            value={{ loadingState: prerenderLoadingState }}
-          >
-            {children}
-          </ActivePageContextProvider>
-        </PageLoadingContextProvider>
-      </ParamsProvider>
-    )
   }
 
   return (
@@ -218,14 +212,16 @@ export const ActiveRouteLoader = ({
       path={renderedPath}
       location={loadingState[renderedPath]?.location}
     >
-      <ActivePageContextProvider value={{ loadingState }}>
-        <PageLoadingContextProvider
-          value={{
-            loading: loadingState[renderedPath]?.state === 'SHOW_LOADING',
-          }}
+      <PageLoadingContextProvider
+        value={{
+          loading: loadingState[renderedPath]?.state === 'SHOW_LOADING',
+        }}
+      >
+        <ActivePageContextProvider
+          value={{ loadingState: renderedLoadingState }}
         >
           {renderedChildren}
-          {loadingState[path]?.state === 'DONE' && (
+          {renderedLoadingState[path]?.state === 'DONE' && (
             <div
               id="redwood-announcer"
               style={{
@@ -245,8 +241,8 @@ export const ActiveRouteLoader = ({
               ref={announcementRef}
             ></div>
           )}
-        </PageLoadingContextProvider>
-      </ActivePageContextProvider>
+        </ActivePageContextProvider>
+      </PageLoadingContextProvider>
     </ParamsProvider>
   )
 }
