@@ -42,6 +42,8 @@ export default function (
   // @NOTE: This var gets mutated inside the visitors
   let pages = processPagesDir().map(withRelativeImports)
 
+  const prerenderedPages: string[] = []
+
   return {
     name: 'babel-plugin-redwood-routes-auto-loader',
     visitor: {
@@ -97,6 +99,35 @@ export default function (
           )
         }
       },
+      // TODO: how can we get this to run first so that we have all the information on the prerendered pages?
+      JSXOpeningElement: {
+        enter(p) {
+          // console.log('jsx element')
+          // console.log(p.node.name.name)
+
+          // @ts-expect-error bazinga
+          if (p.node.name.name !== 'Route') {
+            return
+          }
+
+          const isPrerendered = p.node.attributes.some(
+            // @ts-expect-error bazinga
+            (attr) => attr.name.name === 'prerender'
+          )
+
+          if (!isPrerendered) {
+            return
+          }
+
+          const attr = p.node.attributes.find(
+            // @ts-expect-error bazinga
+            (attr) => attr.name.name === 'page'
+          )
+
+          // @ts-expect-error bazinga
+          prerenderedPages.push(attr.value.expression.name)
+        },
+      },
       Program: {
         enter() {
           pages = processPagesDir().map(withRelativeImports)
@@ -126,7 +157,8 @@ export default function (
                         t.callExpression(
                           // If useStaticImports, do a synchronous import with require (ssr/prerender)
                           // otherwise do a dynamic import (browser)
-                          useStaticImports
+                          useStaticImports ||
+                            prerenderedPages.includes(importName)
                             ? t.identifier('require')
                             : t.identifier('import'),
                           [t.stringLiteral(relativeImport)]

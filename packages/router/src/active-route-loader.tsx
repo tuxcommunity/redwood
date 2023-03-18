@@ -45,7 +45,10 @@ export const ActiveRouteLoader = ({
 
   const [loadingState, setLoadingState] = useState<LoadingStateRecord>({
     [path]: {
-      page: (spec.loader() as unknown as LoadedLoaderSpec).default,
+      page:
+        'then' in spec.loader
+          ? ArlNullPage
+          : (spec.loader() as unknown as LoadedLoaderSpec).default,
       specName: '',
       state: 'PRE_SHOW',
       location,
@@ -199,7 +202,7 @@ export const ActiveRouteLoader = ({
 
     renderedLoadingState = {
       [path]: {
-        state: 'DONE',
+        state: 'PRE_SHOW',
         specName: spec.name,
         page: PageFromLoader,
         location,

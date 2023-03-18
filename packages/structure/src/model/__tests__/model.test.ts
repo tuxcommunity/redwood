@@ -118,12 +118,8 @@ describe('Redwood Route detection', () => {
       // interested in
       .map(({ name, path }) => ({ name, path }))
 
-    expect(prerenderRoutes.length).toBe(6)
+    expect(prerenderRoutes.length).toBe(5)
     expect(prerenderRoutes).toContainEqual({ name: 'home', path: '/' })
-    expect(prerenderRoutes).toContainEqual({
-      name: 'typescriptPage',
-      path: '/typescript',
-    })
     expect(prerenderRoutes).toContainEqual({
       name: 'someOtherPage',
       path: '/somewhereElse',

@@ -30,9 +30,14 @@ const transform = (filename: string) => {
 test('page auto loader correctly imports pages', () => {
   const result = transform(getPaths().web.routes)
 
-  // Pages are automatically imported
+  // Prerendered pages are automatically required
   expect(result.code).toContain(`const HomePage = {
   name: "HomePage",
+  loader: () => require("`)
+
+  // Pages are automatically imported
+  expect(result.code).toContain(`const TypeScriptPage = {
+  name: "TypeScriptPage",
   loader: () => import("`)
 
   // Already imported pages are left alone.
