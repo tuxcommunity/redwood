@@ -102,5 +102,73 @@
   "874c01897b13f1c511b7b347b8f6f2c7aeacdfcb": {
     "message": "chore(deps): update dependency @supabase/supabase-js to v2.12.1 (#7891)",
     "needsCherryPick": false
+  },
+  "b838eb869f3f8f0d8a3caf0d9c0db66b46ae1217": {
+    "message": "chore(deps): update dependency typescript to v5 (#7845)",
+    "needsCherryPick": false
+  },
+  "9bdf3b033c447357aaa40c8d02e475259d67f997": {
+    "message": "Makes validateWith async and a new validateWithSync synchronous (#7681)",
+    "needsCherryPick": false
+  },
+  "63793f81b6993f4e9b0c25dc7932f4008ecec144": {
+    "message": "chore(deps): update dependency @testing-library/dom to v9.1.0 (#7914)",
+    "needsCherryPick": false
+  },
+  "ccf260a4252f031864eb9da7ede7efa33ac94707": {
+    "message": "fix(deps): update dependency msw to v1.2.1 (#7911)",
+    "needsCherryPick": false
+  },
+  "3f461cdb88b21b3d0ed5ae5a3c2d6aa6f7e94369": {
+    "message": "chore(deps): update dependency @types/react to v18.0.29 (#7912)",
+    "needsCherryPick": false
+  },
+  "00632927866d40a3ef1e427a88887b1be7d412ae": {
+    "message": "Keep prerender component tree the same as regular render tree (#7760)",
+    "needsCherryPick": false
+  },
+  "4fc5b6850497a75f122ab10829dd8b24b6ea7204": {
+    "message": "chore(deps): update dependency @testing-library/dom to v9.2.0 (#7921)",
+    "needsCherryPick": false
+  },
+  "a3e59e3dd38fb03518abf58371cf9cd6f59737c2": {
+    "message": "fix(deps): update dependency @fastify/http-proxy to v9 (#7889)",
+    "needsCherryPick": false
+  },
+  "e276a030849be304baddce59fe9a8d2a57f1774e": {
+    "message": "fix(deps): update dependency css-minimizer-webpack-plugin to v5 (#7941)",
+    "needsCherryPick": false
+  },
+  "eed7f66bb60188aeaf353de083fe07dc7e6f7329": {
+    "message": "chore(deps): update dependency @types/react to v18.0.30 (#7939)",
+    "needsCherryPick": false
+  },
+  "0e42e7c45c336cc99ba32a9c9e6fbc3dcbfcce31": {
+    "message": "chore(deps): update dependency @types/react to v18.0.31 (#7948)",
+    "needsCherryPick": false
+  },
+  "20ddbfb6b81584560017d7b50b037fe5ee9ca981": {
+    "message": "chore: Updates Supabase readme, docs and tests for sign up with options and user/session (#7765)",
+    "needsCherryPick": false
+  },
+  "daff80d533e93f8baadf29dbb4f9d7a4c9332d92": {
+    "message": "chore(deps): update dependency @supabase/supabase-js to v2.13.1 (#7981)",
+    "needsCherryPick": false
+  },
+  "a1a2ded5f521e497144f1cb62ad3c68d3b257beb": {
+    "message": "chore: unpublish packages script (#7990)",
+    "needsCherryPick": false
+  },
+  "3db712f9a805899b3919198b72cd70add41ff0c6": {
+    "message": "fix(deps): update dependency @apollo/client to v3.7.11 (#7984)",
+    "needsCherryPick": false
+  },
+  "bce2acdf70163695c3ce4f0bd19eb7938075aeb1": {
+    "message": "chore(deps): update dependency typescript to v5.0.3 (#7972)",
+    "needsCherryPick": false
+  },
+  "826706c4b40b60d10c38eafd5e94e618218ff920": {
+    "message": "chore(deps): update dependency @supabase/supabase-js to v2.13.0 (#7964)",
+    "needsCherryPick": false
   }
 }
