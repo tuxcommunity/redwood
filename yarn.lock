@@ -4749,9 +4749,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@npmcli/arborist@npm:6.2.6":
-  version: 6.2.6
-  resolution: "@npmcli/arborist@npm:6.2.6"
+"@npmcli/arborist@npm:6.2.7":
+  version: 6.2.7
+  resolution: "@npmcli/arborist@npm:6.2.7"
   dependencies:
     "@isaacs/string-locale-compare": ^1.1.0
     "@npmcli/fs": ^3.1.0
@@ -4780,7 +4780,7 @@ __metadata:
     parse-conflict-json: ^3.0.0
     proc-log: ^3.0.0
     promise-all-reject-late: ^1.0.0
-    promise-call-limit: ^1.0.1
+    promise-call-limit: ^1.0.2
     read-package-json-fast: ^3.0.2
     semver: ^7.3.7
     ssri: ^10.0.1
@@ -4788,7 +4788,7 @@ __metadata:
     walk-up-path: ^1.0.0
   bin:
     arborist: bin/index.js
-  checksum: b03f5c35ff9a9d4440925261eba787d32f23927864b8da9de0d01cd9dea03aa09c03e1acfe9ec83bcfc5db3d2e8ece436516f133483ecf7c1fe36af4e2d3820f
+  checksum: 484820389d2672e6519074e29093cd03425ab5139ddc32441063e500bd97a2cb1191c92901d5852fdbf33b603d16afed89bb0442bf433aeb4ab2096f06c71be2
   languageName: node
   linkType: hard
 
@@ -26011,10 +26011,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"promise-call-limit@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "promise-call-limit@npm:1.0.1"
-  checksum: d78141d605a5ceaa3dd1845f4739a31c950c9a62e165e1e7d68c23ada070b4ebe56e00569090deea201f55bcf37b6f5b38840be4f330dfc47f2ec725427af5d9
+"promise-call-limit@npm:^1.0.1, promise-call-limit@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "promise-call-limit@npm:1.0.2"
+  checksum: 500aed321d7b9212da403db369551d7190c96c8937c3b2d15c6097d1037b17fb802c7decfbc8ba6bb937f1cc1ea291e5eba10ed9ea76adc0f398ab9f7d174a58
   languageName: node
   linkType: hard
 
@@ -27619,7 +27619,7 @@ __metadata:
     "@babel/preset-typescript": 7.21.0
     "@babel/runtime-corejs3": 7.21.0
     "@faker-js/faker": 7.6.0
-    "@npmcli/arborist": 6.2.6
+    "@npmcli/arborist": 6.2.7
     "@nrwl/nx-cloud": 15.3.5
     "@playwright/test": 1.32.2
     "@replayio/playwright": 0.3.28
